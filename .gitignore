@@ -1,0 +1,13 @@
+# Compiled
+__pycache__
+*.pyc
+
+# Distribution and packaging
+build/
+dist/
+.idea/
+.ipynb_checkpoints/
+*.egg-info/
+
+.idea
+.ipynb_checkpoints
