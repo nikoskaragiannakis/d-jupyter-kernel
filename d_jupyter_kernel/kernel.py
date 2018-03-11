@@ -62,18 +62,6 @@ class DKernel(Kernel):
                     res = exec_response.communicate()
                     self.send_response(self.iopub_socket, 'stream',
                                        {'name': 'stdout', 'text': res[0].decode('utf-8')})
-                    if exec_response.returncode:
-                        while exec_response.returncode:
-                            exec_response = subprocess.Popen('{}'.format(d_file.name.split('.')[0]),
-                                                             stdout=subprocess.PIPE,
-                                                             stdin=subprocess.PIPE,
-                                                             stderr=subprocess.PIPE)
-                            out = exec_response.communicate(input=self.raw_input().encode())[0]
-                    else:
-                        out = res[0]
-
-                    self.send_response(self.iopub_socket, 'stream',
-                                       {'name': 'stdout', 'text': out.decode('utf-8').strip()})
 
                     return {'status': 'ok', 'execution_count': self.execution_count, 'payload': [],
                             'user_expressions': {}}
