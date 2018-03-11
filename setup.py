@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(name='d_jupyter_kernel',
       version='1.0',
-      description='D kernel for Jupyter',
+      description='D kernel wrapper for Jupyter',
       author='Nikos Karagiannakis',
       author_email='nikoskaragiannakis@gmail.com',
       url='https://github.com/nikoskaragiannakis/d-jupyter-kernel/',
