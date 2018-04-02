@@ -1,6 +1,9 @@
+from contextlib import contextmanager
 import os
 import re
+import shutil
 import subprocess
+import sys
 import tempfile
 
 from ipykernel.kernelbase import Kernel
@@ -9,12 +12,33 @@ from ipykernel.kernelbase import Kernel
 __version__ = '1.0'
 
 
+@contextmanager
+def tempdir():
+    path = tempfile.mkdtemp(dir=os.getcwd())
+    try:
+        yield path
+    finally:
+        try:
+            shutil.rmtree(path)
+        except IOError:
+            sys.stderr.write('Failed to clean up temp dir {}'.format(path))
+
+
 class DKernel(Kernel):
     implementation = 'd_kernel'
     language = 'd'
     language_info = {'name': 'd',
                      'mimetype': 'text/plain',
                      'file_extension': '.d'}
+
+    def __init__(self, **kwargs):
+        self.buffer = set()
+
+        self.func_def_pattern = re.compile(r"^\s*(\w+\s+)?\s*\w+\s+(\w+)\s*\([^)]*\)\s*\{.*?",
+                                           re.MULTILINE)
+        self.import_pattern = re.compile(r"^import\s+[\w+.,: ]+;")
+
+        super().__init__(**kwargs)
 
     @property
     def implementation_version(self):
@@ -32,15 +56,41 @@ class DKernel(Kernel):
                "Uses dmd, compiles in D {}, and creates source code files and " \
                "executables in temporary folder.\n".format(self.language_version)
 
+    def _output_code(self, code):
+        buffer_str = '\n'.join(self.buffer) if self.buffer else ''
+
+        main_str = "void main() {{{}}}".format(code)
+
+        return '{}\n\n{}'.format(buffer_str, main_str)
+
+    @staticmethod
+    def _clear_files(d_file_name):
+        base_name = d_file_name.split('.')[0]
+        os.remove('{}.o'.format(base_name))
+        os.remove(base_name)
+
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=True):
         self._allow_stdin = allow_stdin
         if not silent:
-            with tempfile.TemporaryDirectory() as temp_dir:
-                with tempfile.NamedTemporaryFile(suffix='.d', mode='w', dir=temp_dir) as d_file:
-                    d_file.write(code)
+
+            if re.match(self.func_def_pattern, code) or re.match(self.import_pattern, code):
+                self.buffer.add(code)
+                return {'status': 'ok', 'execution_count': self.execution_count,
+                        'payload': [], 'user_expressions': {}}
+
+            with tempdir() as temp_dir:
+                with tempfile.NamedTemporaryFile(prefix='d_main_',
+                                                 suffix='.d',
+                                                 mode='w',
+                                                 dir=temp_dir) as d_file:
+
+                    d_file.write(self._output_code(code))
                     d_file.flush()
-                    proc = subprocess.Popen(['dmd', d_file.name, '-op'],
+
+                    proc = subprocess.Popen(['dmd',
+                                             d_file.name,
+                                             '-op'],
                                             bufsize=0,
                                             cwd=temp_dir,
                                             stdout=subprocess.PIPE,
