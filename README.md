@@ -29,8 +29,9 @@ This works on Linux. I haven't tried it yet on MacOS or Windows.
 
 ### Step-by-step:
  * clone the repo
- * `pip install -e .` inside the repo's root directory
+ * `cd d-jupyter-kernel` inside the repo's root directory
  * `python setup.py install`
+ * `python d_jupyter_kernel/install.py`. Enjoy!
  * `jupyter-notebook`. Enjoy!
 
 
