@@ -9,10 +9,10 @@ from IPython.utils.tempdir import TemporaryDirectory
 
 kernel_json = {
     "argv": ["python3",
-            "-m",
-            "d_jupyter_kernel",
-            "-f",
-            "{connection_file}"],
+             "-m",
+             "d_jupyter_kernel",
+             "-f",
+             "{connection_file}"],
     "display_name": "D",
     "language": "d"
 }
@@ -20,7 +20,7 @@ kernel_json = {
 
 def install_my_kernel_spec(user=True, prefix=None):
     with TemporaryDirectory() as td:
-        os.chmod(td, 0o755) # Starts off as 700, not user readable
+        os.chmod(td, 0o755)  # Starts off as 700, not user readable
         with open(os.path.join(td, 'kernel.json'), 'w') as f:
             json.dump(kernel_json, f, sort_keys=True)
         # TODO: Copy resources once they're specified
@@ -33,7 +33,7 @@ def _is_root():
     try:
         return os.geteuid() == 0
     except AttributeError:
-        return False # assume not an admin on non-Unix platforms
+        return False  # assume not an admin on non-Unix platforms
 
 
 def main(argv=None):
