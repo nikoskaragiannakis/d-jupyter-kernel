@@ -8,7 +8,7 @@ Currently, you can:
  * define functions, and
  * try out commands 
 
-in different cells, without the need of a `main` function.
+**in different cells**, without the need of a `main` function.
 
 The implementation is far from efficient, but it is a start.
 
