@@ -36,7 +36,7 @@ This works on Linux. I haven't tried it yet on MacOS or Windows.
 
 
 ## Sample notebook
-![Sample notebook](D_kernel_example.png?raw=true "Example of notebook")
+
 
 ## License
 [MIT](LICENSE)
