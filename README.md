@@ -3,15 +3,10 @@
 ## Introductions
 Say hello to the first Jupyter kernel wrapper for D language!
 
-Currently, you can:
- * import modules, 
- * define functions, and
- * try out commands 
+Currently, you need to run the whole code in the same cell in order for it to be executed successfully. 
+This implementation is far from efficient, but it is a start.
 
-**in different cells**, without the need of a `main` function.
-
-The implementation is far from efficient, but it is a start.
-
+At the moment I am trying to integrate [drepl](https://github.com/dlang-community/drepl) with the help of [autowrap](https://github.com/kaleidicassociates/autowrap).
 I will try to update it on my spare time, so don't expect things happening very fast here.
 
 Feel free to give feedback and/or help improve it.
